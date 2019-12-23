@@ -1,4 +1,4 @@
-<!-- [[ markdown multipart-sample.md ]] -->
+<!-- @file multipart-sample.md -->
 
 # multipart-markdown
 
@@ -15,13 +15,13 @@ multipart-markdown is a project to develop alternative markdown format to packag
 [doc2](doc2.md)
 
 
-<!-- [[ markdown doc1.md ]] -->
+<!-- @file doc1.md -->
 
 # Doc1
 
 This is doc1.
 
-<!-- [[ markdown doc2.md ]] -->
+<!-- @file doc2.md -->
 
 # Doc2
 
