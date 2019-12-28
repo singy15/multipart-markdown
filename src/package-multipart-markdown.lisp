@@ -1,5 +1,8 @@
 (defpackage multipart-markdown
   (:use
     cl)
-  (:export))
+  (:export
+    slurp
+    spit))
+
 

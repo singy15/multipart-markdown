@@ -13,9 +13,19 @@
     (out path :direction :output :if-exists :supersede)
     (write-line content out)))
 
-(defun parse-multipart-marker (src)
-  
-  )
+(defun load-markdown (path)
+  (slurp path))
+
+(defun split-markdown-to-lines (md)
+  (ppcre:split #\Newline md))
+
+(defun parse-marker (line)
+  (ppcre:register-groups-bind (m) 
+    ("<!--[\\s]*(.*)[\\s]*-->" line) 
+    (ppcre:split #\Space (string-trim '(#\Space) m))))
+
+(defun partitionize-markdown () nil)
+
 
 (defun pack (path-md)
   
