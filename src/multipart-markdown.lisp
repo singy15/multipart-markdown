@@ -13,6 +13,9 @@
     (out path :direction :output :if-exists :supersede)
     (write-line content out)))
 
+(defun join (sep str-list)
+  (format nil (concatenate 'string "~{~A~^" sep "~}") str-list))
+
 (defun load-markdown (path)
   (slurp path))
 
@@ -42,6 +45,13 @@
                 (setf mds (append mds (list md))))
               (setf (getf md :content) (append (getf md :content) (list (nth i lines)))))))
     mds))
+
+(defun demultipart-markdown (path)
+  (mapc
+    (lambda (m)
+      (spit (getf m :filename) 
+            (join (list #\Newline) (getf m :content))))
+    (partitionize-markdown (split-markdown-to-lines (load-markdown path)))))
 
 
 (defun pack (path-md)

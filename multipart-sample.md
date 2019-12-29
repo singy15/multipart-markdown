@@ -1,30 +1,21 @@
-<!-- @file multipart-sample.md -->
+<!-- @file foo.md -->
 
-# multipart-markdown
+# foo
 
-## About
+foo1
 
-multipart-markdown is a project to develop alternative markdown format to package multiple markdown files (and some resources such as images, binary etc...) into one file, and it's converter (and hopefully, some editor for this).
+## bar
 
-## Converter
+bar1
 
-[doc1](doc1.md)
+<!-- @file bar.md -->
 
-## Editor
+# bar
 
-[doc2](doc2.md)
+bar1
 
+## cont
 
-<!-- @file doc1.md -->
-
-# Doc1
-
-This is doc1.
-
-<!-- @file doc2.md -->
-
-# Doc2
-
-This is doc2.
+cont
 
 
