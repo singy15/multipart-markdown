@@ -24,7 +24,24 @@
     ("<!--[\\s]*(.*)[\\s]*-->" line) 
     (ppcre:split #\Space (string-trim '(#\Space) m))))
 
-(defun partitionize-markdown () nil)
+(defun partitionize-markdown (lines) 
+  "Partitionize markdown"
+  (let ((mds (list))
+        (md nil)
+        (line nil)
+        (marker nil))
+    (loop for i from 0 below (length lines) do
+          (progn
+            ; Parse marker
+            (setf marker (parse-marker (nth i lines)))
+            
+            (if (and (not (equal marker nil)) 
+                     (equal "@file" (nth 0 marker)))
+              (progn
+                (setf md (list :filename (nth 1 marker) :content (list)))
+                (setf mds (append mds (list md))))
+              (setf (getf md :content) (append (getf md :content) (list (nth i lines)))))))
+    mds))
 
 
 (defun pack (path-md)
