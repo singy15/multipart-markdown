@@ -1,4 +1,4 @@
-<!-- (begin-part :type :plain :name "multipart-sample-index.md") -->
+<!-- begin-part markdown multipart-sample-index.md -->
 # multipart-sample-index
 
 ## foo
@@ -19,9 +19,9 @@ Nam tempor nisi quis mi eleifend imperdiet. In hac habitasse platea dictumst. Ma
 
 Maecenas ipsum sem, lobortis ac nunc id, cursus convallis urna. Integer efficitur felis eleifend urna dictum, nec posuere augue volutpat. Quisque molestie pulvinar mauris, eget convallis metus ullamcorper convallis. In non dictum ex. Mauris semper eleifend mauris. Suspendisse ac mollis ipsum. Pellentesque vehicula dolor non mi tempus, et ullamcorper urna elementum. Curabitur venenatis, tortor quis mattis ultrices, ipsum dolor hendrerit massa, vel consectetur elit mauris eget mauris. Integer interdum, ante dignissim ultricies tempus, elit nulla vehicula arcu, eget pretium orci ipsum eu nunc. Donec ut purus fringilla, pharetra lectus eu, laoreet lectus. Sed eu sodales neque, nec fringilla odio. Morbi aliquet nunc in nunc luctus accumsan. Sed pretium velit a aliquet finibus. Fusce non massa nec quam eleifend maximus.
 
-<!-- (end-part) -->
+<!-- end-part -->
 
-<!-- (begin-part :type :plain :name "multipart-sample-foo.md") -->
+<!-- begin-part markdown multipart-sample-foo.md -->
 # multipart-sample-foo
 
 *foo*
@@ -36,9 +36,9 @@ Nam tempor nisi quis mi eleifend imperdiet. In hac habitasse platea dictumst. Ma
 
 Maecenas ipsum sem, lobortis ac nunc id, cursus convallis urna. Integer efficitur felis eleifend urna dictum, nec posuere augue volutpat. Quisque molestie pulvinar mauris, eget convallis metus ullamcorper convallis. In non dictum ex. Mauris semper eleifend mauris. Suspendisse ac mollis ipsum. Pellentesque vehicula dolor non mi tempus, et ullamcorper urna elementum. Curabitur venenatis, tortor quis mattis ultrices, ipsum dolor hendrerit massa, vel consectetur elit mauris eget mauris. Integer interdum, ante dignissim ultricies tempus, elit nulla vehicula arcu, eget pretium orci ipsum eu nunc. Donec ut purus fringilla, pharetra lectus eu, laoreet lectus. Sed eu sodales neque, nec fringilla odio. Morbi aliquet nunc in nunc luctus accumsan. Sed pretium velit a aliquet finibus. Fusce non massa nec quam eleifend maximus.
 
-<!-- (end-part) -->
+<!-- end-part -->
 
-<!-- (begin-part :type :plain :name "multipart-sample-bar.md") -->
+<!-- begin-part markdown multipart-sample-bar.md -->
 # multipart-sample-bar
 
 *bar*
@@ -53,5 +53,5 @@ Nam tempor nisi quis mi eleifend imperdiet. In hac habitasse platea dictumst. Ma
 
 Maecenas ipsum sem, lobortis ac nunc id, cursus convallis urna. Integer efficitur felis eleifend urna dictum, nec posuere augue volutpat. Quisque molestie pulvinar mauris, eget convallis metus ullamcorper convallis. In non dictum ex. Mauris semper eleifend mauris. Suspendisse ac mollis ipsum. Pellentesque vehicula dolor non mi tempus, et ullamcorper urna elementum. Curabitur venenatis, tortor quis mattis ultrices, ipsum dolor hendrerit massa, vel consectetur elit mauris eget mauris. Integer interdum, ante dignissim ultricies tempus, elit nulla vehicula arcu, eget pretium orci ipsum eu nunc. Donec ut purus fringilla, pharetra lectus eu, laoreet lectus. Sed eu sodales neque, nec fringilla odio. Morbi aliquet nunc in nunc luctus accumsan. Sed pretium velit a aliquet finibus. Fusce non massa nec quam eleifend maximus.
 
-<!-- (end-part) -->
+<!-- end-part -->
 
