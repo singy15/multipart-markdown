@@ -158,7 +158,20 @@
         (join (list #\Newline) (getf md :content))))
 
 
+(defparameter *pattern-part* 
+  "<!--[\\s]*begin-part[\\s]*(.*)[\\s]*-->([\\s\\S]*?)<!--[\\s]*end-part[\\s]*-->")
 
+(defun unpack-regexp (path)
+  "Unpackage multipart-markdown using regular expression"
+
+  (let ((target (slurp path))
+        (part (list)))
+    (ppcre:do-matches (s e *pattern-part* target nil) 
+      (ppcre:register-groups-bind 
+        (header body) 
+        (*pattern-part* (subseq target s e)) 
+        (setf part (append part (list :header header :body body)))))
+    part))
 
 (defun unpack (path-md-index)
   "Unpackage resources from a multipart-markdown"
@@ -172,20 +185,6 @@
   "Package resources to a multipart-markdown"
   nil)
 
-
-(defparameter *pattern-part* 
-  "<!--[\\s]*begin-part[\\s]*(.*)[\\s]*-->([\\s\\S]*?)<!--[\\s]*end-part[\\s]*-->")
-
-(defun unpack-regexp (path)
-  "Unpackage multipart-markdown using regular expression"
-  (let ((target (slurp path))
-        (part (list)))
-    (ppcre:do-matches (s e *pattern-part* target nil) 
-      (ppcre:register-groups-bind 
-        (header body) 
-        (*pattern-part* (subseq target s e)) 
-        (setf part (append part (list :header header :body body)))))
-    part))
 
 
 (in-package :cl-user)
