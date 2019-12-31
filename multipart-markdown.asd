@@ -2,7 +2,7 @@
   :version "0.1.0"
   :author ""
   :license ""
-  :depends-on ("cl-ppcre")
+  :depends-on ("cl-ppcre" "alexandria")
   :components ((:module "src"
                 :components
                 ((:file "package-multipart-markdown")

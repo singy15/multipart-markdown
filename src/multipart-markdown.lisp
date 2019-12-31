@@ -14,12 +14,18 @@
     (write-line content out)))
 
 (defun join (sep str-list)
+  "Join list of strings"
   (format nil (concatenate 'string "~{~A~^" sep "~}") str-list))
 
+(defun mapi (fn ls)
+  (mapcar fn ls (alexandria:iota (length ls))))
+
 (defun load-markdown (path)
+  "Read markdown to string"
   (slurp path))
 
 (defun split-markdown-to-lines (md)
+  "Split markdown content to lines"
   (ppcre:split #\Newline md))
 
 (defun parse-marker (line)
@@ -27,7 +33,16 @@
     ("<!--[\\s]*(.*)[\\s]*-->" line) 
     (ppcre:split #\Space (string-trim '(#\Space) m))))
 
-(defun partitionize-markdown (lines) 
+(defun parse-directive (path)
+  "Parse multipart-markdown directive"
+  (let* ((lines (split-markdown-to-lines (load-markdown path)))
+         (markers (list)))
+    (remove-if-not #'car
+                   (mapi (lambda (line i) 
+                           (cons (parse-marker line) i))
+                         lines))))
+
+(defun partitionize (lines) 
   "Partitionize markdown"
   (let ((mds (list))
         (md nil)
@@ -43,27 +58,25 @@
               (progn
                 (setf md (list :filename (nth 1 marker) :content (list)))
                 (setf mds (append mds (list md))))
-              (setf (getf md :content) (append (getf md :content) (list (nth i lines)))))))
+              (setf (getf md :content) (append (getf md :content) 
+                                               (list (nth i lines)))))))
     mds))
 
-(defun demultipart-markdown (path)
-  (mapc
-    (lambda (m)
-      (spit (getf m :filename) 
-            (join (list #\Newline) (getf m :content))))
-    (partitionize-markdown (split-markdown-to-lines (load-markdown path)))))
+(defun write-markdown-to-file (md)
+  "Write markdown to file"
+  (spit (getf md :filename) 
+        (join (list #\Newline) (getf md :content))))
 
+(defun unpack (path-md-index)
+  "Unpackage resources from a multipart-markdown"
+  (mapc #'write-markdown-to-file 
+        (partitionize (split-markdown-to-lines 
+                        (load-markdown path-md-index))))
+  nil)
 
-(defun pack (path-md)
-  
-  )
-
-(defun unpack (path-md)
-  
-  )
-
-
-
+(defun pack (path-md-dir)
+  "Package resources to a multipart-markdown"
+  nil)
 
 (in-package :cl-user)
 
