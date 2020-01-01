@@ -159,19 +159,31 @@
 
 
 (defparameter *pattern-part* 
-  "<!--[\\s]*begin-part[\\s]*(.*)[\\s]*-->([\\s\\S]*?)<!--[\\s]*end-part[\\s]*-->")
+  (concatenate 'string 
+               "<!--[\\s]*begin-part[\\s]*(.*)[\\s]*-->"
+               "([\\s\\S]*?)"
+               "<!--[\\s]*end-part[\\s]*-->"))
 
 (defun unpack-regexp (path)
   "Unpackage multipart-markdown using regular expression"
 
   (let ((target (slurp path))
         (part (list)))
+    ;; Parse multipart markdown
     (ppcre:do-matches (s e *pattern-part* target nil) 
       (ppcre:register-groups-bind 
         (header body) 
         (*pattern-part* (subseq target s e)) 
-        (setf part (append part (list :header header :body body)))))
-    part))
+        (setf part (append part (list (list :header header :body body))))))
+    
+    ;; Output to files
+    (mapc 
+      (lambda (m)
+        (let ((header (ppcre:split #\Space (string-trim '(#\Space) (getf m :header)))))
+          ;; type = markdown
+          (when (equal (car header) "markdown")
+            (spit (cadr header) (getf m :body)))))
+      part)))
 
 (defun unpack (path-md-index)
   "Unpackage resources from a multipart-markdown"
