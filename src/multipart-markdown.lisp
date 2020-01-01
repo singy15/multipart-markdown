@@ -182,6 +182,7 @@
         (let ((header (ppcre:split #\Space (string-trim '(#\Space) (getf m :header)))))
           ;; type = markdown
           (when (equal (car header) "markdown")
+            (ensure-directories-exist (cadr header))
             (spit (cadr header) (getf m :body)))))
       part)))
 
@@ -197,29 +198,46 @@
   "Scan link"
   
   (let ((target (slurp path))
-        (pattern-markdown "[^\\!]*\\[(.*)\\]\\((.*)\\)")
-        (pattern-image "\\!\\[(.*)\\]\\((.*)\\)")
+        (pattern-markdown "^[\\s]*\\[(.*)\\]\\((.*)\\)")
+        (pattern-image "^[\\s]*\\!\\[(.*)\\]\\((.*)\\)")
         (links (list)))
-    ;; Scan markdown link
-    (ppcre:do-matches
-      (s e pattern-markdown target nil)
-      (ppcre:register-groups-bind (name link) (pattern-markdown (subseq target s e)) 
-        (setf links (append links (list (list :type :markdown :name name :link link))))))
-    
-    ;; Scan image link
-    (ppcre:do-matches
-      (s e pattern-image target nil)
-      (ppcre:register-groups-bind (name link) (pattern-image (subseq target s e)) 
-        (setf links (append links (list (list :type :image :name name :link link))))))
-    
+    (mapc
+      (lambda (line) 
+        ;; Scan markdown link
+        (ppcre:do-matches
+          (s e pattern-markdown line nil)
+          (ppcre:register-groups-bind (name link) (pattern-markdown (subseq line s e)) 
+            (setf links (append links (list (list :type :markdown :name name :link link))))))
+        
+        ; ;; Scan image link
+        ; (ppcre:do-matches
+        ;   (s e pattern-image line nil)
+        ;   (ppcre:register-groups-bind (name link) (pattern-image (subseq line s e)) 
+        ;     (setf links (append links (list (list :type :image :name name :link link))))))
+        
+        )
+      (ppcre:split #\Newline target))
     links))
 
+(defun recursive-pack (path)
+  "Package markdown recursively"
+  (join
+    (list #\Newline)
+    (list
+      (format nil "<!-- begin-part markdown ~A -->" path)
+      (slurp path)
+      (format nil "<!-- end-part -->~%")
+      (reduce
+        (lambda (memo x)
+          (concatenate 'string memo (recursive-pack (getf x :link))))
+        (scan-link path)
+        :initial-value ""))))
 
-(defun pack (path-md-dir)
+(defun pack (path-out path-index-md)
   "Package resources to a multipart-markdown"
-  nil)
-
-
+  (let ((packed (recursive-pack path-index-md)))
+    (spit path-out packed)
+    packed))
 
 (in-package :cl-user)
 
