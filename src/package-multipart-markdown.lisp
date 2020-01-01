@@ -2,7 +2,5 @@
   (:use
     cl)
   (:export
-    slurp
-    spit))
-
+    main))
 
