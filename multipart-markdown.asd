@@ -2,7 +2,7 @@
   :version "0.1.0"
   :author ""
   :license ""
-  :depends-on ("cl-ppcre" "alexandria" "s-base64")
+  :depends-on ("cl-ppcre" "alexandria" "s-base64" "cl-fad")
   :components ((:module "src"
                 :components
                 ((:file "package-multipart-markdown")

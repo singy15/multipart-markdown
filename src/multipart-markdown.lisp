@@ -93,17 +93,22 @@
           (with-input-from-string (in base64) 
             (coerce (s-base64:decode-base64-bytes in) 'list)))))
 
+(defun path-html2md (path)
+  (concatenate 'string
+    (namestring (cl-fad:pathname-directory-pathname (pathname path)))
+    (pathname-name (pathname path))
+    ".md"))
+
 (defun recursive-pack (path link-type)
   "Package markdown recursively"
   (join
     (list #\Newline)
     (list
       (if (equal link-type :markdown)
-         (format nil "<!-- begin-part markdown ~A -->" path)
+         (format nil "<!-- begin-part markdown ~A -->" (path-html2md path))
          (format nil "<!-- begin-part image ~A -->" path))
       (if (equal link-type :markdown)
-         (string-trim '(#\Space #\Newline #\Tab) (slurp path))
-         (to-base64 path))
+          (string-trim '(#\Space #\Newline #\Tab) (slurp (path-html2md path)))(to-base64 path))
       (if (equal link-type :markdown)
          (format nil "<!-- end-part -->~%")
          (format nil "<!-- end-part -->~%"))
@@ -111,7 +116,7 @@
          (reduce
            (lambda (memo x)
              (concatenate 'string memo (recursive-pack (getf x :link) (getf x :type))))
-           (scan-link path)
+           (scan-link (path-html2md path))
            :initial-value "")
          ""))))
 
