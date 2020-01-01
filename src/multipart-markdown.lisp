@@ -23,16 +23,16 @@
   "Join list of strings"
   (format nil (concatenate 'string "~{~A~^" sep "~}") str-list))
 
-(defun unpack-regexp (path)
+(defun unpack (path)
   "Unpackage multipart-markdown using regular expression"
 
   (let ((target (slurp path))
         (part (list)))
     ;; Parse multipart markdown
-    (ppcre:do-matches (s e *pattern-part* target nil) 
+    (ppcre:do-matches (s e +pattern-part+ target nil) 
       (ppcre:register-groups-bind 
         (header body) 
-        (*pattern-part* (subseq target s e)) 
+        (+pattern-part+ (subseq target s e)) 
         (setf part (append part (list (list :header header :body body))))))
     
     ;; Output to files
@@ -124,7 +124,7 @@
 (defun main ()
   (let ((command (nth 1 sb-ext:*posix-argv*)))
     (cond ((equal command "pack") (apply #'pack (cddr sb-ext:*posix-argv*)))
-          ((equal command "unpack") (apply #'unpack-regexp (cddr sb-ext:*posix-argv*))))))
+          ((equal command "unpack") (apply #'unpack (cddr sb-ext:*posix-argv*))))))
 
 (in-package :cl-user)
 

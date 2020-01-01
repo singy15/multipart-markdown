@@ -2,5 +2,7 @@
   (:use
     cl)
   (:export
-    main))
+    main
+    pack
+    unpack))
 
