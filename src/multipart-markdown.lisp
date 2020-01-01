@@ -106,7 +106,7 @@
 (defun read-multipart-markdown (path)
   "Read multipart-markdown"
   (let* ((v-path path)
-         (v-content (slurp path))
+         (v-content (string-trim '(#\Space #\Newline #\Tab) (slurp path)))
          (v-source-list (mapcar #'parse-source-line 
                                 (split-markdown-to-lines v-content)))
          (v-part (list 1 2 3)))
@@ -183,7 +183,12 @@
           ;; type = markdown
           (when (equal (car header) "markdown")
             (ensure-directories-exist (cadr header))
-            (spit (cadr header) (getf m :body)))))
+            (spit (cadr header) (getf m :body)))
+          
+          ;; type = image
+          (when (equal (car header) "image")
+            (ensure-directories-exist (cadr header))
+            (write-base64 (cadr header) (getf m :body)))))
       part)))
 
 (defun unpack (path-md-index)
@@ -209,33 +214,59 @@
           (ppcre:register-groups-bind (name link) (pattern-markdown (subseq line s e)) 
             (setf links (append links (list (list :type :markdown :name name :link link))))))
         
-        ; ;; Scan image link
-        ; (ppcre:do-matches
-        ;   (s e pattern-image line nil)
-        ;   (ppcre:register-groups-bind (name link) (pattern-image (subseq line s e)) 
-        ;     (setf links (append links (list (list :type :image :name name :link link))))))
-        
-        )
+        ;; Scan image link
+        (ppcre:do-matches
+          (s e pattern-image line nil)
+          (ppcre:register-groups-bind (name link) (pattern-image (subseq line s e)) 
+            (setf links (append links (list (list :type :image :name name :link link)))))))
       (ppcre:split #\Newline target))
     links))
 
-(defun recursive-pack (path)
+(defun to-base64 (path) 
+  "Convert file to base64 string"
+  (let ((bytes (list)))
+    (with-open-file (in path :element-type '(unsigned-byte 8))
+      (loop :for b := (read-byte in nil -1)
+            :until (= -1 b)
+            :do (progn
+                  (setf bytes (append bytes (list b))))))
+    (with-output-to-string (out) 
+      (s-base64:encode-base64-bytes (coerce bytes 'vector) out))))
+
+(defun write-base64 (path base64)
+  (with-open-file (out path
+                     :direction :output 
+                     :if-exists :supersede
+                     :element-type '(unsigned-byte 8))
+    (mapc (lambda (b) (write-byte b out))
+          (with-input-from-string (in base64) 
+            (coerce (s-base64:decode-base64-bytes in) 'list)))))
+
+(defun recursive-pack (path link-type)
   "Package markdown recursively"
   (join
     (list #\Newline)
     (list
-      (format nil "<!-- begin-part markdown ~A -->" path)
-      (slurp path)
-      (format nil "<!-- end-part -->~%")
-      (reduce
-        (lambda (memo x)
-          (concatenate 'string memo (recursive-pack (getf x :link))))
-        (scan-link path)
-        :initial-value ""))))
+      (if (equal link-type :markdown)
+         (format nil "<!-- begin-part markdown ~A -->" path)
+         (format nil "<!-- begin-part image ~A -->" path))
+      (if (equal link-type :markdown)
+         (string-trim '(#\Space #\Newline #\Tab) (slurp path))
+         (to-base64 path))
+      (if (equal link-type :markdown)
+         (format nil "<!-- end-part -->~%")
+         (format nil "<!-- end-part -->~%"))
+      (if (equal link-type :markdown)
+         (reduce
+           (lambda (memo x)
+             (concatenate 'string memo (recursive-pack (getf x :link) (getf x :type))))
+           (scan-link path)
+           :initial-value "")
+         ""))))
 
 (defun pack (path-out path-index-md)
   "Package resources to a multipart-markdown"
-  (let ((packed (recursive-pack path-index-md)))
+  (let ((packed (recursive-pack path-index-md :markdown)))
     (spit path-out packed)
     packed))
 
