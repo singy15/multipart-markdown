@@ -5,6 +5,8 @@
   
 [foo](./multipart-sample-foo.md)
 
+![testimg](./testimg.png)
+
 ## bar
 
 [bar](./multipart-sample-bar.md)

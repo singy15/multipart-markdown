@@ -193,6 +193,28 @@
             (getf (read-multipart-markdown path-md-index) :content))))
   nil)
 
+(defun scan-link (path)
+  "Scan link"
+  
+  (let ((target (slurp path))
+        (pattern-markdown "[^\\!]*\\[(.*)\\]\\((.*)\\)")
+        (pattern-image "\\!\\[(.*)\\]\\((.*)\\)")
+        (links (list)))
+    ;; Scan markdown link
+    (ppcre:do-matches
+      (s e pattern-markdown target nil)
+      (ppcre:register-groups-bind (name link) (pattern-markdown (subseq target s e)) 
+        (setf links (append links (list (list :type :markdown :name name :link link))))))
+    
+    ;; Scan image link
+    (ppcre:do-matches
+      (s e pattern-image target nil)
+      (ppcre:register-groups-bind (name link) (pattern-image (subseq target s e)) 
+        (setf links (append links (list (list :type :image :name name :link link))))))
+    
+    links))
+
+
 (defun pack (path-md-dir)
   "Package resources to a multipart-markdown"
   nil)
