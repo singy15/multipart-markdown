@@ -27,3 +27,20 @@ sbcl
 
 ```
 
+例えば、上のサンプルの場合は以下のようなファイル群に展開されます。
+
+```
+sample/
+│  sample.md (展開前のファイル)
+│  sample-index.md
+│  sample1.md
+│
+├─images/
+│      sample-img.png
+│
+└─sub/
+        sample2.md
+```
+
+
+
