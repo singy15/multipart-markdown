@@ -52,6 +52,10 @@
             (write-base64 (cadr header) (getf m :body)))))
       part)))
 
+;;; Check the path is local or remote.
+(defun p-remote-path (path)
+  (ppcre:scan "^(http://|https://|ftp://).*$" path))
+
 ;;; Scan links.
 (defun scan-link (path)
   (let ((target (slurp path))
@@ -60,17 +64,19 @@
         (links (list)))
     (mapc
       (lambda (line) 
-        ;; Scan markdown
+        ;; Match markdown link pattern.
         (ppcre:do-matches
           (s e pattern-markdown line nil)
           (ppcre:register-groups-bind (name link) (pattern-markdown (subseq line s e)) 
-            (setf links (append links (list (list :type :markdown :name name :link link))))))
+            (when (not (p-remote-path link))
+              (setf links (append links (list (list :type :markdown :name name :link link)))))))
         
-        ;; Scan image
+        ;; Match image link pattern.
         (ppcre:do-matches
           (s e pattern-image line nil)
           (ppcre:register-groups-bind (name link) (pattern-image (subseq line s e)) 
-            (setf links (append links (list (list :type :image :name name :link link)))))))
+            (when (not (p-remote-path link))
+              (setf links (append links (list (list :type :image :name name :link link))))))))
       (ppcre:split #\Newline target))
     links))
 
@@ -103,7 +109,7 @@
     ".md"))
 
 ;;; TODO: too complex
-;;; TODO: convert only relative link for html
+;;; TODO: convert only links for markdown
 ;;; Package markdown recursively.
 (defun recursive-pack (path link-type)
   (join
